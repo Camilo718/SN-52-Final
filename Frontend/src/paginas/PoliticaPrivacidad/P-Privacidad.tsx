@@ -70,10 +70,6 @@ const PPrivacidad: React.FC = () => {
           <p>
             Si tiene alguna pregunta sobre esta Política de Privacidad, puede contactarnos a través de <a href="mailto:SN_52@SENA.com" className="text-primary hover:underline">SN_52@SENA.com</a>.
           </p>
-
-          <div className="acceptance-section">
-            <button className="accept-button">Acepto la Política de Privacidad</button>
-          </div>
         </div>
       </div>
     </div>

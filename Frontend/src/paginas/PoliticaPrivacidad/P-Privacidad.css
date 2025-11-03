@@ -66,40 +66,6 @@
   color: #2c7a7b;
   font-weight: 600;
 }
-
-/* Acceptance Section */
-.acceptance-section {
-  margin-top: 40px;
-  text-align: center;
-  padding: 30px;
-  background: linear-gradient(135deg, #f0f8ff 0%, #e0f7fa 100%);
-  border-radius: 10px;
-  border: 2px solid #b2dfdb;
-}
-
-.accept-button {
-  background: linear-gradient(90deg, #66d1cd 0%, #2c7a7b 100%);
-  color: white;
-  border: none;
-  padding: 15px 30px;
-  font-size: 1.2rem;
-  font-weight: 600;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(102, 209, 205, 0.3);
-}
-
-.accept-button:hover {
-  background: linear-gradient(90deg, #2c7a7b 0%, #66d1cd 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(102, 209, 205, 0.4);
-}
-
-.accept-button:active {
-  transform: translateY(0);
-}
-
 /* Responsive Design */
 @media (max-width: 768px) {
   .legal-page {

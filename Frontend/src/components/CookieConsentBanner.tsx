@@ -55,15 +55,17 @@ export default function CookieConsentBanner() {
       <div className="cookie-content">
         <Cookie className="cookie-icon" />
         <div className="cookie-text">
-          <h4 className="cookie-title">Este sitio web utiliza cookies</h4>
+          <h4 className="cookie-title">Nuestras cookies.Tu eleccion</h4>
           <p>
             Usamos cookies para mejorar tu experiencia de navegación y analizar nuestro tráfico. Al hacer clic en "Aceptar", aceptas nuestro uso de cookies.
+          </p>
+          <p>
+            Consultar nuetras <Link to="/privacidad" className="link-text">Política de Privacidad</Link> y <Link to="/terminos" className="link-text">Términos y Condiciones</Link> para 
+            tipos de datos personales que recopilamos, incluidos datos sobre tu navegador.Puedes cambiar tus preferencias de cookies en cualquier momento.
           </p>
         </div>
         <div className="cookie-actions">
           <button onClick={handleAccept} className="accept-button">Aceptar</button>
-          <Link to="/privacidad" className="link-button">Privacidad</Link>
-          <Link to="/terminos" className="link-button">Términos y Condiciones</Link>
         </div>
       </div>
     </div>

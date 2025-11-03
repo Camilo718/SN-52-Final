@@ -74,6 +74,11 @@
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(102, 209, 205, 0.4);
 }
+.link-text {
+  text-decoration: underline;
+  color: rgb(0, 0, 0); /* o el color que quieras */
+}
+
 
 .link-button {
   color: hsl(var(--primary));

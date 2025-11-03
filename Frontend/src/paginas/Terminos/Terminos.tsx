@@ -57,9 +57,6 @@ const Terminos: React.FC = () => {
             Estos términos se regirán e interpretarán de acuerdo con las leyes de Colombia, sin dar efecto a ningún principio de conflicto de leyes.
           </p>
 
-          <div className="acceptance-section">
-            <button className="accept-button">Acepto los Términos y Condiciones</button>
-          </div>
         </div>
       </div>
     </div>
