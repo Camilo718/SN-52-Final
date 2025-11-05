@@ -59,11 +59,36 @@ def login(
     contrasena_usuario: str = Form(...),
     db: Session = Depends(get_db)
 ):
+    from datetime import datetime, timedelta
+
     usuario = db.query(Usuario).filter(Usuario.correo_usuario == correo_usuario).first()
     if not usuario:
         raise HTTPException(status_code=400, detail="Correo no registrado")
+
+    # Verificar si la cuenta está bloqueada
+    if usuario.bloqueado_hasta and usuario.bloqueado_hasta > datetime.utcnow():
+        tiempo_restante = usuario.bloqueado_hasta - datetime.utcnow()
+        minutos = int(tiempo_restante.total_seconds() / 60)
+        raise HTTPException(status_code=429, detail=f"Cuenta bloqueada. Intenta de nuevo en {minutos} minutos.")
+
     if not verificar_contrasena(contrasena_usuario, usuario.contrasena_usuario):
-        raise HTTPException(status_code=400, detail="Contraseña incorrecta")
+        # Incrementar intentos fallidos
+        usuario.intentos_fallidos += 1
+
+        if usuario.intentos_fallidos >= 3:
+            # Bloquear por 15 minutos
+            usuario.bloqueado_hasta = datetime.utcnow() + timedelta(minutes=15)
+            usuario.intentos_fallidos = 0  # Resetear intentos
+            db.commit()
+            raise HTTPException(status_code=429, detail="Demasiados intentos fallidos. Cuenta bloqueada por 15 minutos.")
+        else:
+            db.commit()
+            raise HTTPException(status_code=400, detail=f"Contraseña incorrecta. Intentos restantes: {3 - usuario.intentos_fallidos}")
+
+    # Login exitoso: resetear intentos fallidos
+    usuario.intentos_fallidos = 0
+    usuario.bloqueado_hasta = None
+    db.commit()
 
     token = crear_token({"sub": usuario.id_usuario, "rol_id": usuario.rol_id})
 

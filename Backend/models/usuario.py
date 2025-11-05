@@ -1,11 +1,12 @@
 # usuario.py
 from db import Base
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
+from datetime import datetime
 
 class Usuario(Base):
     __tablename__ = "usuarios"
-    
+
     id_usuario = Column(Integer, primary_key=True, index=True)
     nombre_usuario = Column(String(60))
     apellido_usuario = Column(String(60))
@@ -18,3 +19,7 @@ class Usuario(Base):
     comentarios = relationship("Comentario", back_populates="usuario")
 
     reset_token = Column(String(255), nullable=True)  # <-- Campo para recuperación
+
+    # Campos para límite de intentos de login
+    intentos_fallidos = Column(Integer, default=0, nullable=False)
+    bloqueado_hasta = Column(DateTime, nullable=True)

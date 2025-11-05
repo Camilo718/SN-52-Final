@@ -26,7 +26,12 @@ export default function Login() {
       const res = await fetch("http://localhost:8000/auth/login", { method: "POST", body: fd });
       if (!res.ok) {
         const err = await res.json();
-        showAlert(err.detail || "Error en login", "error");
+        if (res.status === 429) {
+          // Bloqueo de cuenta
+          showAlert(err.detail || "Cuenta bloqueada temporalmente", "error");
+        } else {
+          showAlert(err.detail || "Error en login", "error");
+        }
         return;
       }
 
