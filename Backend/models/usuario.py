@@ -18,7 +18,9 @@ class Usuario(Base):
     rol = relationship("Rol", back_populates="usuarios")
     comentarios = relationship("Comentario", back_populates="usuario")
 
-    reset_token = Column(String(255), nullable=True)  # <-- Campo para recuperación
+    reset_token = Column(String(255), nullable=True)
+    reset_token_expiration = Column(DateTime, nullable=True)
+
 
     # Campos para límite de intentos de login
     intentos_fallidos = Column(Integer, default=0, nullable=False)
