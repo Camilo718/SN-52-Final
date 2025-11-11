@@ -146,7 +146,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({ noticia }) => {
       />
       <style>{`
         .news-card .image-wrapper{position:relative}
-        .news-card .edit-overlay{position:absolute;top:8px;right:8px;background:rgba(11,99,255,0.9);border:none;color:#fff;padding:6px;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+        .news-card .edit-overlay{position: absolute;top:8px;right:8px;background: #17e0c6ff;border:none;color: #fff;padding:6px;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer}
         .news-card .edit-overlay:hover{transform:scale(1.03)}
       `}</style>
     </>

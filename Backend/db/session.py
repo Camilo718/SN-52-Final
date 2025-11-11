@@ -1,8 +1,6 @@
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy import create_engine
-from db.database import Base
+from db.database import engine, Base
 
-engine = create_engine("sqlite:///./test.db", connect_args={"check_same_thread": False})
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 # Este es get_db

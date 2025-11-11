@@ -1,0 +1,258 @@
+/* EditNewsModal.css - Estilos para el modal de edición de noticias */
+
+.edit-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,0.45), rgba(0,0,0,0.6));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3000;
+  padding: 20px;
+}
+
+.edit-modal.card {
+  background: linear-gradient(180deg, #ffffff, #fbfbff);
+  padding: 0;
+  border-radius: 12px;
+  max-width: 1000px;
+  width: 100%;
+  box-shadow: 0 10px 40px rgba(2,6,23,0.4);
+  overflow: hidden;
+  font-family: Inter, 'Segoe UI', Roboto, Arial, sans-serif;
+}
+
+.edit-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid #eef2ff;
+  background: linear-gradient(135deg, #21b0a6 0%, #76efe1 100%);
+  color: white;
+}
+
+.edit-header h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+}
+
+.pencil-icon {
+  color: #21b0a6;
+  margin-right: 10px;
+  transform: rotate(-45deg);
+  display: inline-block;
+  font-size: 24px;
+}
+
+.edit-header .subtitle {
+  margin: 4px 0 0;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 13px;
+}
+
+.close-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: white;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.3s;
+}
+
+.close-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.edit-body {
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+}
+
+.preview-col {
+  width: 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.image-preview {
+  background: #f6f8ff;
+  border-radius: 8px;
+  height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 2px dashed #21b0a6;
+}
+
+.image-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.image-placeholder {
+  color: #9aa3b2;
+  font-size: 14px;
+}
+
+.image-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.file-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: linear-gradient(135deg, #21b0a6 0%, #76efe1 100%);
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: transform 0.3s;
+}
+
+.file-btn:hover {
+  transform: translateY(-2px);
+}
+
+.file-btn input {
+  display: none;
+}
+
+.hint {
+  color: #8892a8;
+  font-size: 12px;
+}
+
+.main-col {
+  flex: 1;
+}
+
+.field {
+  display: block;
+  margin-bottom: 16px;
+}
+
+.label-title {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #374151;
+}
+
+.edit-form input,
+.edit-form textarea,
+.edit-form select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #e6e9f2;
+  border-radius: 8px;
+  background: #fff;
+  font-size: 14px;
+  transition: border-color 0.3s;
+}
+
+.edit-form input:focus,
+.edit-form textarea:focus,
+.edit-form select:focus {
+  outline: none;
+  border-color: #21b0a6;
+  box-shadow: 0 0 0 3px #76efe1;
+}
+
+.category-row {
+  display: flex;
+  gap: 8px;
+}
+
+.custom-input {
+  width: 40%;
+}
+
+.edit-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #eef2ff;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #21b0a6 0%, #76efe1 100%);
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: transform 0.3s;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+}
+
+.btn-secondary {
+  background: #f1f5ff;
+  color: #21b0a6;
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 2px solid #21b0a6;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background 0.3s;
+}
+
+.btn-secondary:hover {
+  background: #21b0a6;
+  color: white;
+}
+
+.btn-secondary.small {
+  padding: 6px 10px;
+  font-size: 13px;
+}
+
+/* Responsive */
+@media (max-width: 880px) {
+  .edit-body {
+    flex-direction: column;
+  }
+
+  .preview-col {
+    width: 100%;
+  }
+
+  .custom-input {
+    width: 100%;
+  }
+
+  .edit-actions {
+    flex-direction: column;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    width: 100%;
+  }
+}

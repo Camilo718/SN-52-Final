@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import type { Noticia } from '../services/noticias';
 import { getNoticiasCreadas } from '../services/noticias';
+import './EditNewsModal.css';
 
 interface EditNewsModalProps {
   isOpen: boolean;
@@ -29,7 +30,7 @@ const EditNewsModal: React.FC<EditNewsModalProps> = ({ isOpen, onClose, noticia,
 
   useEffect(() => {
     // Build a categories list from existing created noticias + defaults
-    const defaults = ['Deportes', 'Arte', 'Cultura', 'Bienestar', 'Tecnología', 'Educación', 'Política'];
+    const defaults = ['Deportes', 'Arte', 'Cultura', 'Bienestar', 'Tecnología'];
     try {
       const creadas = getNoticiasCreadas();
       const fromCreated = Array.from(new Set(creadas.map(n => n.categoria))).filter(Boolean);
@@ -81,7 +82,20 @@ const EditNewsModal: React.FC<EditNewsModalProps> = ({ isOpen, onClose, noticia,
       <div className="edit-modal card">
         <header className="edit-header">
           <div>
-            <h2>Editar noticia</h2>
+            <h2>
+              <span 
+                className="pencil-icon" 
+                style={{ 
+                  color: '#21b0a6', 
+                  marginRight: '10px', 
+                  transform: 'rotate(-45deg)',
+                  display: 'inline-block'
+                }}
+              >
+                &#9998;
+              </span>
+              Editar noticia
+            </h2>
             <p className="subtitle">Modifica título, categoría, resumen y la imagen. Los cambios se guardarán localmente.</p>
           </div>
           <button className="close-btn" onClick={onClose} aria-label="Cerrar">✕</button>
@@ -124,7 +138,6 @@ const EditNewsModal: React.FC<EditNewsModalProps> = ({ isOpen, onClose, noticia,
                   {availableCategories.map(c => (
                     <option key={c} value={c}>{c}</option>
                   ))}
-                  <option value="__custom__">Otra / Personalizada</option>
                 </select>
                 {categoria === '__custom__' && (
                   <input className="custom-input" placeholder="Escribe la categoría" value={customCategory} onChange={e => setCustomCategory(e.target.value)} />
@@ -146,34 +159,7 @@ const EditNewsModal: React.FC<EditNewsModalProps> = ({ isOpen, onClose, noticia,
 
       </div>
 
-      <style>{`
-        .edit-modal-backdrop{position:fixed;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0.45), rgba(0,0,0,0.6));display:flex;align-items:center;justify-content:center;z-index:3000;padding:20px}
-        .edit-modal.card{background:linear-gradient(180deg,#ffffff,#fbfbff);padding:0;border-radius:12px;max-width:1000px;width:100%;box-shadow:0 10px 40px rgba(2,6,23,0.4);overflow:hidden;font-family:Inter,Segoe UI,Roboto,Arial}
-        .edit-header{display:flex;justify-content:space-between;align-items:center;padding:20px 24px;border-bottom:1px solid #eef2ff}
-        .edit-header h2{margin:0;font-size:20px}
-        .edit-header .subtitle{margin:4px 0 0;color:#5b6470;font-size:13px}
-        .close-btn{background:transparent;border:none;font-size:20px;cursor:pointer}
-        .edit-body{display:flex;gap:20px;padding:20px}
-        .preview-col{width:320px;display:flex;flex-direction:column;gap:12px}
-        .image-preview{background:#f6f8ff;border-radius:8px;height:220px;display:flex;align-items:center;justify-content:center;overflow:hidden}
-        .image-preview img{width:100%;height:100%;object-fit:cover}
-        .image-placeholder{color:#9aa3b2}
-        .image-controls{display:flex;flex-direction:column;gap:8px}
-        .file-btn{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;background:#eef6ff;border-radius:8px;color:#0b63ff;cursor:pointer}
-        .file-btn input{display:none}
-        .hint{color:#8892a8;font-size:12px}
-        .main-col{flex:1}
-        .field{display:block;margin-bottom:12px}
-        .label-title{display:block;font-weight:600;margin-bottom:6px}
-        .edit-form input,.edit-form textarea,.edit-form select{width:100%;padding:10px;border:1px solid #e6e9f2;border-radius:8px;background:#fff}
-        .category-row{display:flex;gap:8px}
-        .custom-input{width:40%}
-        .edit-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:10px}
-        .btn-primary{background:#0b63ff;color:#fff;padding:10px 16px;border-radius:10px;border:none;cursor:pointer}
-        .btn-secondary{background:#f1f5ff;color:#0b63ff;padding:8px 12px;border-radius:8px;border:none;cursor:pointer}
-        .btn-secondary.small{padding:6px 10px;font-size:13px}
-        @media (max-width:880px){.edit-body{flex-direction:column}.preview-col{width:100%}.custom-input{width:100%}}
-      `}</style>
+
     </div>
   );
 };
