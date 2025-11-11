@@ -351,7 +351,7 @@ export const Inicio: React.FC = () => {
               <div className="section-content">
                 {noticiasDeportes.length > 0 ? (
                   <div className="news-grid">
-                    {noticiasDeportes.slice(0, 3).map((noticia) => (
+                    {noticiasDeportes.slice(0, 6).map((noticia) => (
                       <article key={noticia.id} className="news-card">
                         <img
                           src={noticia.imagen}
@@ -405,7 +405,7 @@ export const Inicio: React.FC = () => {
                     ))}
                   </div>
                 ) : (
-                  <p>Data comment contains actual impacts for society, beneficial parameters and exemplary that requires...</p>
+                  <p>los datos bien analizados pueden generar cambios positivos y servir de ejemplo para mejora la sociedad.....</p>
                 )}
               </div>
             </section>
@@ -416,7 +416,7 @@ export const Inicio: React.FC = () => {
               <div className="section-content">
                 {noticiasArte.length > 0 ? (
                   <div className="news-grid">
-                    {noticiasArte.slice(0, 3).map((noticia) => (
+                    {noticiasArte.slice(0, 6).map((noticia) => (
                       <article key={noticia.id} className="news-card">
                         <img
                           src={noticia.imagen}
@@ -481,7 +481,7 @@ export const Inicio: React.FC = () => {
               <div className="section-content">
                 {noticiasCultura.length > 0 ? (
                   <div className="news-grid">
-                    {noticiasCultura.slice(0, 3).map((noticia) => (
+                    {noticiasCultura.slice(0, 6).map((noticia) => (
                       <article key={noticia.id} className="news-card">
                         <img
                           src={noticia.imagen}
@@ -546,7 +546,7 @@ export const Inicio: React.FC = () => {
               <div className="section-content">
                 {noticiasBienestar.length > 0 ? (
                   <div className="news-grid">
-                    {noticiasBienestar.slice(0, 3).map((noticia) => (
+                    {noticiasBienestar.slice(0, 6).map((noticia) => (
                       <article key={noticia.id} className="news-card">
                         <img
                           src={noticia.imagen}

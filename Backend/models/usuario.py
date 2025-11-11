@@ -25,3 +25,6 @@ class Usuario(Base):
     # Campos para límite de intentos de login
     intentos_fallidos = Column(Integer, default=0, nullable=False)
     bloqueado_hasta = Column(DateTime, nullable=True)
+
+    # Relación con notificaciones
+    notificaciones = relationship("Notificacion", back_populates="usuario")

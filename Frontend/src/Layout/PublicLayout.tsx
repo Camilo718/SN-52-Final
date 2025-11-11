@@ -7,12 +7,15 @@ import Alert from "../components/Alert";
 import FreeReadModal from "../components/FreeReadModal";
 import FreeReads from "../services/freeReads";
 import CookieConsentBanner from "../components/CookieConsentBanner";
+import Notifications from "../components/Notifications";
+import { Bell } from "lucide-react";
 
 export default function PublicLayout() {
   const { user, logout } = useContext(UserContext);
   const [remaining, setRemaining] = useState<number>(0);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalPersistent, setModalPersistent] = useState(false);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
   const reopenTimerRef = ({} as { current: number | null });
   // const location = useLocation(); // Eliminar si no se usa
   const navigate = useNavigate();
@@ -175,9 +178,18 @@ export default function PublicLayout() {
           </div>
           <div className="navbar-actions">
             {user ? (
-              <button onClick={handleLogout} className="btn">
-                Cerrar Sesión
-              </button>
+              <>
+                <button
+                  onClick={() => setNotificationsOpen(true)}
+                  className="btn notification-btn"
+                  title="Notificaciones"
+                >
+                  <Bell size={16} />
+                </button>
+                <button onClick={handleLogout} className="btn">
+                  Cerrar Sesión
+                </button>
+              </>
             ) : (
               <>
                 <Link to="/login" className="btn">
@@ -226,6 +238,10 @@ export default function PublicLayout() {
       <Alert />
       <FreeReadModal open={modalOpen} onClose={handleCloseModal} />
       <CookieConsentBanner />
+      <Notifications
+        isOpen={notificationsOpen}
+        onClose={() => setNotificationsOpen(false)}
+      />
     </div>
   );
 }

@@ -5,6 +5,7 @@ from datetime import datetime
 class UsuarioShort(BaseModel):
     id: int
     nombre: str
+    correo: Optional[str] = None
     foto: Optional[str] = None
 
 class ComentarioBase(BaseModel):

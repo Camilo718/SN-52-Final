@@ -4,12 +4,14 @@ from typing import List
 from db.session import get_db
 from models.noticia import Noticia
 from models.imagen import Imagen
+from models.notificacion import Notificacion
 from dtos.noticia_dto import NoticiaCreate, NoticiaUpdate, NoticiaResponse
 from security.auth import get_current_user
 from models.usuario import Usuario
 from datetime import date
 import shutil
 import os
+from services.mail_service import enviar_correo_notificacion_borrador
 
 router = APIRouter(
     prefix="/api/noticias",
@@ -61,6 +63,32 @@ async def crear_noticia(
     db.commit()
     db.refresh(nueva_noticia)
     print(f"[noticias] noticia creada id={nueva_noticia.id_noticia} por usuario={nueva_noticia.usuario_escritor_id}")
+
+    # Si es un borrador (estado=1), notificar a editores
+    if estado == 1:
+        try:
+            # Obtener todos los editores (rol_id=3)
+            editores = db.query(Usuario).filter(Usuario.rol_id == 3).all()
+            if editores:
+                # Crear notificaciones en BD
+                for editor in editores:
+                    notificacion = Notificacion(
+                        titulo=f"Nuevo borrador: {titulo}",
+                        mensaje=f"El escritor {current_user.nombre_usuario} {current_user.apellido_usuario} ha guardado un borrador titulado '{titulo}' para revisión.",
+                        usuario_id=editor.id_usuario,
+                        noticia_id=nueva_noticia.id_noticia
+                    )
+                    db.add(notificacion)
+                db.commit()
+
+                # Enviar correos
+                destinatarios = [{"email": e.correo_usuario, "nombre": f"{e.nombre_usuario} {e.apellido_usuario}"} for e in editores]
+                escritor_nombre = f"{current_user.nombre_usuario} {current_user.apellido_usuario}"
+                enviar_correo_notificacion_borrador(destinatarios, titulo, escritor_nombre)
+        except Exception as e:
+            print(f"⚠️ Error notificando borrador: {e}")
+            # No fallar la creación de la noticia por error en notificaciones
+
     return nueva_noticia
 
 @router.put("/{noticia_id}", response_model=NoticiaResponse)

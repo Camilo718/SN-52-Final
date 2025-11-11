@@ -483,7 +483,7 @@ const CrearArt: React.FC = () => {
               ) : (
                 <>
                   <Save size={18} />
-                  Guardar Borrador
+                  Guardar como Borrador
                 </>
               )}
             </button>

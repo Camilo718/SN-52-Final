@@ -1,4 +1,4 @@
-# Backend/services/mail_service.py
+ # Backend/services/mail_service.py
 from mailjet_rest import Client
 import os
 from dotenv import load_dotenv
@@ -72,7 +72,7 @@ def enviar_correo_recuperacion(destinatario: str, nombre: str, token: str):
                       <p>Hola {nombre},</p>
                       <p>Recibimos una solicitud para restablecer tu contraseña en <strong>SN-52</strong>.</p>
                       <p>Haz clic en el siguiente enlace para continuar con el proceso:</p>
-                      <a href="{reset_link}" 
+                      <a href="{reset_link}"
                          style="background-color:#004aad; color:white; padding:10px 20px; border-radius:5px; text-decoration:none; font-weight:bold;">
                          Restablecer contraseña
                       </a>
@@ -93,4 +93,56 @@ def enviar_correo_recuperacion(destinatario: str, nombre: str, token: str):
         return response.json()
     except Exception as e:
         print("⚠️ Error al enviar correo de recuperación:", e)
+        return None
+
+
+# 📝 --- Correo de notificación de borrador ---
+def enviar_correo_notificacion_borrador(destinatarios: list, titulo_noticia: str, escritor_nombre: str):
+    """
+    Envía notificación por email a editores cuando un escritor guarda un borrador.
+    destinatarios: lista de dicts con 'email' y 'nombre'
+    """
+    if not destinatarios:
+        print("⚠️ No hay destinatarios para notificación de borrador")
+        return None
+
+    to_list = [{"Email": d["email"], "Name": d["nombre"]} for d in destinatarios]
+
+    data = {
+        'Messages': [
+            {
+                "From": {
+                    "Email": "dilanramirezv2007@gmail.com",
+                    "Name": "SN-52 Noticias"
+                },
+                "To": to_list,
+                "Subject": f"📝 Nuevo borrador disponible para revisión - {titulo_noticia}",
+                "HTMLPart": f"""
+                <html>
+                  <body style="font-family: Arial, sans-serif; color: #333; padding: 20px;">
+                    <div style="max-width: 600px; margin: auto; border: 1px solid #ddd; border-radius: 10px; padding: 20px;">
+                      <h2 style="color: #004aad;">📝 Nuevo borrador para revisión</h2>
+                      <p>Hola,</p>
+                      <p>El escritor <strong>{escritor_nombre}</strong> ha guardado un nuevo borrador titulado:</p>
+                      <p style="font-size: 18px; font-weight: bold; color: #004aad;">"{titulo_noticia}"</p>
+                      <p>Por favor, revisa el borrador en el panel de administración y proporciona retroalimentación al escritor.</p>
+                      <a href="http://localhost:5173/dashboard"
+                         style="background-color:#004aad; color:white; padding:10px 20px; border-radius:5px; text-decoration:none; font-weight:bold;">
+                         Ir al panel de administración
+                      </a>
+                      <br><br>
+                      <p>Con aprecio,<br><strong>El equipo de SN-52</strong></p>
+                    </div>
+                  </body>
+                </html>
+                """
+            }
+        ]
+    }
+    try:
+        response = mailjet.send.create(data=data)
+        print(f"✅ Correo de notificación de borrador enviado a {len(destinatarios)} editores:", response.status_code)
+        return response.json()
+    except Exception as e:
+        print("⚠️ Error al enviar correo de notificación de borrador:", e)
         return None

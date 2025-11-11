@@ -23,3 +23,4 @@ class Noticia(Base):
     imagenes = relationship("Imagen", back_populates="noticia") #plural y coincide
     comentarios = relationship("Comentario", back_populates="noticia")
     categoria = relationship("Categoria", back_populates="noticias")
+    notificaciones = relationship("Notificacion", back_populates="noticia")

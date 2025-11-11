@@ -40,6 +40,7 @@ async def crear_comentario(
     usuario_info = {
         'id': current_user.id_usuario,
         'nombre': f"{current_user.nombre_usuario} {current_user.apellido_usuario}".strip(),
+        'correo': current_user.correo_usuario,
         'foto': current_user.foto_usuario
     }
 
@@ -76,10 +77,11 @@ async def obtener_comentarios_noticia(
             usuario = {
                 'id': getattr(c.usuario, 'id_usuario', None),
                 'nombre': f"{getattr(c.usuario, 'nombre_usuario', '')} {getattr(c.usuario, 'apellido_usuario', '')}".strip(),
+                'correo': getattr(c.usuario, 'correo_usuario', None),
                 'foto': getattr(c.usuario, 'foto_usuario', None)
             }
         else:
-            usuario = {'id': c.usuario_id, 'nombre': None, 'foto': None}
+            usuario = {'id': c.usuario_id, 'nombre': None, 'correo': None, 'foto': None}
 
         results.append({
             'id_comentario': c.id_comentario,
