@@ -1,46 +1,43 @@
-from fastapi import APIRouter, UploadFile, Form, Depends, HTTPException
+from fastapi import Depends, HTTPException, status
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
-from db import get_db
+from db.session import get_db
 from models.usuario import Usuario
-from security.auth import encriptar_contrasena
+from security.passwords import verificar_contrasena
+from security.jwt import verificar_token_jwt
+from typing import Optional
 
-router = APIRouter(prefix="/auth", tags=["Autenticación"])
+security = HTTPBearer()
 
-@router.post("/register")
-async def register(
-    nombre_usuario: str = Form(...),
-    apellido_usuario: str = Form(...),
-    correo_usuario: str = Form(...),
-    contrasena_usuario: str = Form(...),
-    foto_usuario: UploadFile = None,
+def get_current_user(
+    credentials: HTTPAuthorizationCredentials = Depends(security),
     db: Session = Depends(get_db)
-):
-    # Validar que no exista el correo
-    existing_user = db.query(Usuario).filter(Usuario.correo == correo_usuario).first()
-    if existing_user:
-        raise HTTPException(status_code=400, detail="Correo ya registrado")
+) -> Usuario:
+    """
+    Dependencia para obtener el usuario actual desde el token JWT.
+    """
+    token = credentials.credentials
+    try:
+        payload = verificar_token_jwt(token)
+        user_id: int = payload.get("sub")
+        if user_id is None:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Token inválido",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+    except Exception:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Token inválido",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
 
-    hashed_password = encriptar_contrasena(contrasena_usuario)
-
-    # Guardar foto si existe
-    foto_filename = None
-    if foto_usuario:
-        foto_filename = f"{correo_usuario}.{foto_usuario.filename.split('.')[-1]}"
-        file_path = f"static/fotos/{foto_filename}"
-        with open(file_path, "wb") as f:
-            content = await foto_usuario.read()
-            f.write(content)
-
-    nuevo_usuario = Usuario(
-        nombre=nombre_usuario,
-        apellido=apellido_usuario,
-        correo=correo_usuario,
-        contrasena=hashed_password,
-        rol_id=1,  # Rol por defecto: lector
-        foto=foto_filename
-    )
-    db.add(nuevo_usuario)
-    db.commit()
-    db.refresh(nuevo_usuario)
-
-    return {"usuario_id": nuevo_usuario.id, "mensaje": "Usuario registrado correctamente"}
+    user = db.query(Usuario).filter(Usuario.id_usuario == user_id).first()
+    if user is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Usuario no encontrado",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    return user

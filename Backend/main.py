@@ -31,6 +31,19 @@ templates = Jinja2Templates(directory="templates")
 app.include_router(auth_router)           # Rutas /auth/...
 app.include_router(usuarios_compat_router)  # Rutas /usuarios/... (compatibilidad con correos antiguos)
 
+# Incluir routers adicionales
+from routes.categoria_controller import router as categoria_router
+from routes.comentarios_controller import router as comentarios_router
+from routes.imagenes_controller import router as imagenes_router
+from routes.noticias_controller import router as noticias_router
+from routes.roles_controller import router as roles_router
+
+app.include_router(categoria_router)      # Rutas /categorias/...
+app.include_router(comentarios_router)    # Rutas /api/comentarios/...
+app.include_router(imagenes_router)       # Rutas /api/imagenes/...
+app.include_router(noticias_router)       # Rutas /api/noticias/...
+app.include_router(roles_router)          # Rutas /api/roles/...
+
 # Ruta raíz de prueba
 @app.get("/")
 def read_root():

@@ -135,8 +135,8 @@
 
 /* Botón save activo */
 .noticia-actions .action-btn.save-btn.active {
-    background-color: #fef3c7;
-    color: #d97706;
+    background-color: #66d1cd;
+    color: #fff;
 }
 
 /* Mejoras responsivas */

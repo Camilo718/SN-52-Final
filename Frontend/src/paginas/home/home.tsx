@@ -90,9 +90,9 @@ export const Inicio: React.FC = () => {
       setNoticiasBienestar(getNoticiasPorCategoriaPrincipal('bienestar'));
     };
 
-  // Cargar todas las noticias centralizadas (estáticas + creadas)
-  const all = getAllArticles();
-  setAllArticles(all);
+    // Cargar todas las noticias centralizadas (estáticas + creadas)
+    const all = getAllArticles();
+    setAllArticles(all);
 
     cargarNoticias();
 
@@ -103,6 +103,14 @@ export const Inicio: React.FC = () => {
 
     window.addEventListener('storage', handleStorageChange);
     return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
+
+  // Cargar estado de guardados al montar
+  useEffect(() => {
+    const saved = localStorage.getItem('saved_articles');
+    const savedIds = saved ? JSON.parse(saved) : [];
+    const newSavedSet = new Set(savedIds);
+    setSavedArticles(newSavedSet);
   }, []);
 
   // Búsqueda en tiempo real con debounce

@@ -33,6 +33,15 @@ const NoticiaPage: React.FC = () => {
     }
   }, [id, location.state]);
 
+  // Verificar si el artículo está guardado al cargar
+  useEffect(() => {
+    if (articulo) {
+      const saved = localStorage.getItem('saved_articles');
+      const savedIds = saved ? JSON.parse(saved) : [];
+      setIsSaved(savedIds.includes(articulo.id));
+    }
+  }, [articulo]);
+
   // consumir una lectura gratuita cuando un usuario no registrado abre el artículo
   const { user } = useContext(UserContext);
   useEffect(() => {

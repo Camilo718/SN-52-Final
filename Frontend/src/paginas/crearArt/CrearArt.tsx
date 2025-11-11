@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { UserContext } from "../../context/UserContextValue";
 import { crearNoticia } from "../../services/noticias";
+import { uploadImage } from "../../services/images";
 import { useAlert } from "../../hooks/useAlert";
 import "./CrearArt.css";
 

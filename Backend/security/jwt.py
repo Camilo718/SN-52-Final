@@ -1,7 +1,8 @@
 from datetime import datetime, timedelta
-from jose import jwt
+from jose import jwt, JWTError
 import os
 from dotenv import load_dotenv
+from typing import Optional
 
 load_dotenv()
 
@@ -20,3 +21,11 @@ def crear_token(data: dict, expires_delta: timedelta | None = None) -> str:
     to_encode.update({"exp": expire})
 
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+
+def verificar_token_jwt(token: str) -> Optional[dict]:
+    """Verifica y decodifica un JWT"""
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        return payload
+    except JWTError:
+        return None

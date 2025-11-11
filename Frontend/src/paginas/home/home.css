@@ -510,6 +510,12 @@ body {
   background-color: #adedcba4;
 }
 
+/* Botón save activo */
+.home-page .action-btn.save-btn.active {
+  background-color: #66d1cd;
+  color: #fff;
+}
+
 /* ========== FEATURED SECTION ========== */
 /* Sección destacada con margen inferior */
 .featured-section {
