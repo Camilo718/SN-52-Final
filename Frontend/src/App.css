@@ -540,3 +540,8 @@ body {
     padding: 0;
   }
 }
+
+/* Edit overlay for news cards (uniform pencil on top-right) */
+.news-card{position:relative}
+.news-card .action-btn.edit-btn{position:absolute;top:10px;right:10px;z-index:5;background:linear-gradient(180deg,#0b63ff,#084bcc);color:#fff;border:none;padding:8px;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.news-card .action-btn.edit-btn:hover{transform:scale(1.04)}

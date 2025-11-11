@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";// Importaciones necesarias para el componente React
-import { Heart, MessageCircle, Share2, Bookmark, Search } from "lucide-react";// Importación de iconos de Lucide para botones de acciones
+import React, { useState, useEffect, useContext } from "react";// Importaciones necesarias para el componente React
+import { Heart, MessageCircle, Share2, Bookmark, Search, Edit2 } from "lucide-react";// Importación de iconos de Lucide para botones de acciones
 import { Carousel } from 'antd';// Importación del componente Carousel de Ant Design para el carrusel
-import { getNoticiasCreadas, toggleLikeNoticia, toggleSaveNoticia, shareNoticia, getNoticiasPorCategoriaPrincipal } from "../../services/noticias";
+import { getNoticiasCreadas, toggleLikeNoticia, toggleSaveNoticia, shareNoticia, getNoticiasPorCategoriaPrincipal, actualizarNoticia } from "../../services/noticias";
 import type { Noticia } from "../../services/noticias";
 import SearchModal from "../../components/SearchModal";
 import getAllArticles from "../../data/allArticles";
@@ -10,6 +10,8 @@ import "./home.css";// Importación del archivo de estilos CSS
 // Importación de imágenes decorativas para el footer
 import CommentsModal from "../../components/CommentsModal";
 import Footer from "../../components/Footer";
+import EditNewsModal from "../../components/EditNewsModal";
+import { UserContext } from "../../context/UserContext";
 
 // Array de objetos que contiene las imágenes destacadas para mostrar en la barra lateral
 const imagenesDestacadas = [
@@ -76,9 +78,16 @@ export const Inicio: React.FC = () => {
   const [noticiasCultura, setNoticiasCultura] = useState<Noticia[]>([]);
   const [noticiasBienestar, setNoticiasBienestar] = useState<Noticia[]>([]);
   const [commentCounts, setCommentCounts] = useState<{ [key: number]: number }>({});
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editingNoticia, setEditingNoticia] = useState<Noticia | null>(null);
+  const { user } = useContext(UserContext);
 
   // Cargar noticias creadas al montar el componente
   useEffect(() => {
+    // Cargar todas las noticias centralizadas (estáticas + creadas)
+    const all = getAllArticles();
+    setAllArticles(all);
+
     const cargarNoticias = () => {
       const noticias = getNoticiasCreadas();
       setNoticiasCreadas(noticias);
@@ -90,10 +99,6 @@ export const Inicio: React.FC = () => {
       setNoticiasBienestar(getNoticiasPorCategoriaPrincipal('bienestar'));
     };
 
-    // Cargar todas las noticias centralizadas (estáticas + creadas)
-    const all = getAllArticles();
-    setAllArticles(all);
-
     cargarNoticias();
 
     // Recargar noticias cuando cambie el localStorage (útil para desarrollo)
@@ -104,6 +109,36 @@ export const Inicio: React.FC = () => {
     window.addEventListener('storage', handleStorageChange);
     return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
+
+  const refreshNoticias = () => {
+    const noticias = getNoticiasCreadas();
+    setNoticiasCreadas(noticias);
+    setNoticiasDeportes(getNoticiasPorCategoriaPrincipal('deportes'));
+    setNoticiasArte(getNoticiasPorCategoriaPrincipal('arte'));
+    setNoticiasCultura(getNoticiasPorCategoriaPrincipal('cultura'));
+    setNoticiasBienestar(getNoticiasPorCategoriaPrincipal('bienestar'));
+  };
+
+  const openEditModal = (noticia: Noticia) => {
+    setEditingNoticia(noticia);
+    setShowEditModal(true);
+  };
+
+  const closeEditModal = () => {
+    setEditingNoticia(null);
+    setShowEditModal(false);
+  };
+
+  const saveEdit = async (updated: Noticia) => {
+    try {
+      await actualizarNoticia(updated);
+      refreshNoticias();
+      closeEditModal();
+    } catch (error) {
+      console.error('Error al guardar noticia:', error);
+      alert('No se pudo guardar la noticia.');
+    }
+  };
 
   // Cargar estado de guardados al montar
   useEffect(() => {
@@ -359,6 +394,11 @@ export const Inicio: React.FC = () => {
                             >
                               <Bookmark size={16} />
                             </button>
+                            {user && user.rol === 'editor' && (
+                              <button onClick={() => openEditModal(noticia)} title="Editar noticia" className="action-btn edit-btn">
+                                <Edit2 size={16} />
+                              </button>
+                            )}
                           </div>
                         </div>
                       </article>
@@ -419,6 +459,11 @@ export const Inicio: React.FC = () => {
                             >
                               <Bookmark size={16} />
                             </button>
+                            {user && user.rol === 'editor' && (
+                              <button onClick={() => openEditModal(noticia)} title="Editar noticia" className="action-btn edit-btn">
+                                <Edit2 size={16} />
+                              </button>
+                            )}
                           </div>
                         </div>
                       </article>
@@ -479,6 +524,11 @@ export const Inicio: React.FC = () => {
                             >
                               <Bookmark size={16} />
                             </button>
+                            {user && user.rol === 'editor' && (
+                              <button onClick={() => openEditModal(noticia)} title="Editar noticia" className="action-btn edit-btn">
+                                <Edit2 size={16} />
+                              </button>
+                            )}
                           </div>
                         </div>
                       </article>
@@ -539,6 +589,11 @@ export const Inicio: React.FC = () => {
                             >
                               <Bookmark size={16} />
                             </button>
+                            {user && user.rol === 'editor' && (
+                              <button onClick={() => openEditModal(noticia)} title="Editar noticia" className="action-btn edit-btn">
+                                <Edit2 size={16} />
+                              </button>
+                            )}
                           </div>
                         </div>
                       </article>
@@ -669,6 +724,16 @@ export const Inicio: React.FC = () => {
           noticiaId={selectedNoticia.id}
           noticiaTitle={selectedNoticia.titulo}
           onCommentCountChange={handleCommentCountChange}
+        />
+      )}
+
+      {/* Modal de edición (para noticias creadas) */}
+      {editingNoticia && (
+        <EditNewsModal
+          isOpen={showEditModal}
+          onClose={closeEditModal}
+          noticia={editingNoticia}
+          onSave={saveEdit}
         />
       )}
 

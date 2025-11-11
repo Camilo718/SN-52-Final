@@ -1,10 +1,11 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { Heart, MessageCircle, Share2, Bookmark, Plus } from 'lucide-react';
+import { Heart, MessageCircle, Share2, Bookmark, Plus, Edit2 } from 'lucide-react';
 import { Button, Card } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import CarouselComponent from '../../components/CarouselComponent';
 import './bienestar.css';
 import CommentsModal from '../../components/CommentsModal';
+import EditNewsModal from '../../components/EditNewsModal';
 import Footer from '../../components/Footer';
 import { UserContext } from '../../context/UserContext';
 import { getNoticiasPorCategoriaPrincipal, toggleLikeNoticia, toggleSaveNoticia, shareNoticia, type Noticia } from '../../services/noticias';
@@ -65,6 +66,38 @@ export default function Bienestar() {
     window.addEventListener('storage', handleStorageChange);
     return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
+
+  const refreshNoticias = () => {
+    const noticias = getNoticiasPorCategoriaPrincipal('bienestar');
+    setNoticiasCreadas(noticias);
+  };
+
+  const [editingNoticia, setEditingNoticia] = useState<Noticia | null>(null);
+  const [showEditModal, setShowEditModal] = useState(false);
+
+  const openEditModal = (id: number) => {
+    const found = noticiasCreadas.find(n => n.id === id);
+    if (found) {
+      setEditingNoticia(found);
+      setShowEditModal(true);
+    }
+  };
+
+  const closeEditModal = () => {
+    setEditingNoticia(null);
+    setShowEditModal(false);
+  };
+
+  const saveEdit = async (updated: Noticia) => {
+    try {
+      await (await import('../../services/noticias')).actualizarNoticia(updated);
+      refreshNoticias();
+      closeEditModal();
+    } catch (error) {
+      console.error('Error al guardar noticia:', error);
+      alert('No se pudo guardar la noticia.');
+    }
+  };
 
   const [news, setNews] = useState<NewsItem[]>([
     {
@@ -339,6 +372,9 @@ export default function Bienestar() {
                         <Button type="text" size="small" icon={<Share2 size={18} />} onClick={() => item.id > 1000 ? handleShareCreada(noticiasCreadas.find(n => n.id === item.id)!) : null} className="action-btn" />
                         <div className="flex-grow" />
                         <Button type="text" size="small" icon={<Bookmark size={18} />} onClick={() => item.id > 1000 ? handleSaveCreada(item.id) : toggleSave(item.id)} className={"action-btn " + (item.isSaved ? "save-active" : "")} />
+                        {item.id > 1000 && user && user.rol === 'editor' && (
+                          <Button type="text" size="small" icon={<Edit2 size={18} />} onClick={() => openEditModal(item.id)} />
+                        )}
                       </div>
                     </div>
                   </Card>
@@ -406,6 +442,15 @@ export default function Bienestar() {
           onClose={handleCloseComments}
           noticiaId={selectedNoticia.id}
           noticiaTitle={selectedNoticia.title}
+        />
+      )}
+
+      {editingNoticia && (
+        <EditNewsModal
+          isOpen={showEditModal}
+          onClose={closeEditModal}
+          noticia={editingNoticia}
+          onSave={saveEdit}
         />
       )}
 

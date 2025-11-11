@@ -141,3 +141,20 @@ export const getNoticiasPorCategoriaPrincipal = (categoriaPrincipal: string): No
   const noticias = getNoticiasCreadas();
   return noticias.filter(n => mapearCategoriaPrincipal(n.categoria) === categoriaPrincipal.toLowerCase());
 };
+
+// Función para actualizar una noticia existente (por ahora en localStorage)
+export const actualizarNoticia = async (noticiaActualizada: Noticia): Promise<Noticia> => {
+  try {
+    const noticias = getNoticiasCreadas();
+    const index = noticias.findIndex(n => n.id === noticiaActualizada.id);
+    if (index !== -1) {
+      noticias[index] = { ...noticias[index], ...noticiaActualizada };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(noticias));
+      return noticias[index];
+    }
+    throw new Error('Noticia no encontrada');
+  } catch (error) {
+    console.error('Error al actualizar noticia:', error);
+    throw error;
+  }
+};
