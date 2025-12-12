@@ -25,11 +25,18 @@ if config.config_file_name is not None:
 # Metadata de los modelos
 target_metadata = Base.metadata
 
+# Construir URL de base de datos desde variables de entorno
+DB_USER = os.getenv('MYSQL_USER', 'root')
+DB_PASSWORD = os.getenv('MYSQL_PASSWORD', 'admin')
+DB_HOST = os.getenv('MYSQL_HOST', 'localhost')
+DB_PORT = os.getenv('MYSQL_PORT', '3306')
+DB_NAME = os.getenv('MYSQL_DATABASE', 'sn-52-3147234')
+DATABASE_URL = f'mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}'
+
 def run_migrations_offline():
     """Ejecuta migraciones sin conexión a la DB"""
-    url = config.get_main_option("sqlalchemy.url")
     context.configure(
-        url=url,
+        url=DATABASE_URL,
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
@@ -39,8 +46,11 @@ def run_migrations_offline():
 
 def run_migrations_online():
     """Ejecuta migraciones con conexión a la DB"""
+    configuration = config.get_section(config.config_ini_section)
+    configuration["sqlalchemy.url"] = DATABASE_URL
+    
     connectable = engine_from_config(
-        config.get_section(config.config_ini_section),
+        configuration,
         prefix="sqlalchemy.",
         poolclass=pool.NullPool,
     )
