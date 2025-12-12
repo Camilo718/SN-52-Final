@@ -1,38 +1,61 @@
-# Usar una imagen base de Python oficial y ligera
+# =============================
+#      Imagen base
+# =============================
 FROM python:3.11-slim
 
-# Instalar dependencias del sistema necesarias (MariaDB y Cairo)
+# =============================
+#      Variables de entorno
+# =============================
+
+# Directorio base del proyecto
+ENV APP_HOME="/app"
+ENV BACKEND_DIR="/app/BACKEND"
+
+# Archivo de dependencias
+ENV REQUIREMENTS_FILE="requirements.txt"
+
+# Config de Uvicorn
+ENV UVICORN_HOST="0.0.0.0"
+ENV UVICORN_PORT="8000"
+
+# Modo de ejecución (production | development)
+ENV ENVIRONMENT="production"
+
+# Comando de inicio
+ENV START_CMD="alembic upgrade head && uvicorn main:app --host ${UVICORN_HOST} --port ${UVICORN_PORT}"
+
+# =============================
+#      Dependencias del sistema
+# =============================
+
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-    \
-        # Dependencias de MariaDB/MySQL
         default-libmysqlclient-dev \
         gcc \
         pkg-config \
-        \
-        # Nuevas dependencias de Cairo y FreeType (para pycairo y ReportLab)
         libcairo2-dev \
         libfreetype6-dev \
-        \
-        # Paquetes de desarrollo general que podrían ser útiles
-        build-essential && \
-    rm -rf /var/lib/apt/lists/*
+        build-essential \
+    && rm -rf /var/lib/apt/lists/*
 
-# Establecer el directorio de trabajo dentro del contenedor
-WORKDIR /app
+# =============================
+#      Copiar proyecto
+# =============================
+WORKDIR ${APP_HOME}
+COPY . ${APP_HOME}
 
-# Copiar todo el contenido del repositorio al directorio de trabajo del contenedor
-COPY . /app
+# =============================
+#      Instalar backend
+# =============================
+WORKDIR ${BACKEND_DIR}
+RUN pip install --no-cache-dir -r ${REQUIREMENTS_FILE}
 
-# Establecer el directorio de trabajo en la carpeta de la aplicación (BACKEND)
-WORKDIR /app/BACKEND
+# =============================
+#      Comando por defecto
+# =============================
+CMD ["sh", "-c", "${START_CMD}"]
 
-# Instalar las dependencias de Python
-RUN pip install --no-cache-dir -r requirements.txt
-
-# El comando de inicio que se ejecutará al iniciar el contenedor
-# *** LÍNEA RESTAURADA: Ahora usa Alembic para las migraciones. ***
-CMD ["sh", "-c", "alembic upgrade head && uvicorn main:app --host 0.0.0.0 --port 8000"]
-
-# Exponer el puerto
-EXPOSE 8000}
+# =============================
+#      Exponer Puerto
+# =============================
+EXPOSE ${UVICORN_PORT}
