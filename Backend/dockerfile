@@ -1,23 +1,33 @@
-# 1. FUERZA LA IMAGEN DE PYTHON
 FROM python:3.11-slim
 
-# 2. CONFIGURACIÓN DEL ENTORNO
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
+ENV DEBIAN_FRONTEND=noninteractive
 
-# 3. DIRECTORIO DE TRABAJO DENTRO DEL CONTENEDOR
-# /app es la carpeta dentro del contenedor.
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        build-essential \
+        gcc \
+        pkg-config \
+        default-libmysqlclient-dev \
+        libmariadb-dev \
+        libmariadb-dev-compat \
+        libfreetype6-dev \
+        libjpeg62-turbo-dev \
+        libpng-dev \
+        zlib1g-dev \
+        libssl-dev \
+        libffi-dev \
+        && rm -rf /var/lib/apt/lists/*
+
+# Copiar backend
 WORKDIR /app
+COPY . .
 
-# 4. INSTALACIÓN DE DEPENDENCIAS (Optimizada)
-# Copia requirements.txt (que debe estar en /Backend)
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# Instalar dependencias
+RUN pip install --no-cache-dir --upgrade pip wheel setuptools && \
+    pip install --no-cache-dir -r requirements.txt
 
-# 5. COPIA DEL CÓDIGO
-# Copia todos los archivos restantes de /Backend a /app
-COPY . /app
+ENV PORT=8000
+EXPOSE 8000
 
-# 6. COMANDO DE EJECUCIÓN
-# Comando explícito para ejecutar Alembic y luego Uvicorn (FastAPI)
-CMD ["sh", "-c", "alembic upgrade head && uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}"]
+# EJECUTAR ALEMBIC ANTES DE INICIAR UVICORN
+CMD ["sh", "-c", "alembic upgrade head && uvicorn main:app --host 0.0.0.0 --port $PORT"]
