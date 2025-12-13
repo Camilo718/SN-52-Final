@@ -24,7 +24,6 @@ django-filter==25.1
 djangorestframework==3.16.1
 dnspython==2.7.0
 ecdsa==0.19.1
-email_validator==2.2.0
 et_xmlfile==2.0.0
 executing==2.2.0
 fastapi==0.115.8
