@@ -1,61 +1,33 @@
-# =============================
-#      Imagen base
-# =============================
 FROM python:3.11-slim
 
-# =============================
-#      Variables de entorno
-# =============================
-
-# Directorio base del proyecto
-ENV APP_HOME="/app"
-ENV BACKEND_DIR="/app/BACKEND"
-
-# Archivo de dependencias
-ENV REQUIREMENTS_FILE="requirements.txt"
-
-# Config de Uvicorn
-ENV UVICORN_HOST="0.0.0.0"
-ENV UVICORN_PORT="8000"
-
-# Modo de ejecución (production | development)
-ENV ENVIRONMENT="production"
-
-# Comando de inicio
-ENV START_CMD="alembic upgrade head && uvicorn main:app --host ${UVICORN_HOST} --port ${UVICORN_PORT}"
-
-# =============================
-#      Dependencias del sistema
-# =============================
+ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-        default-libmysqlclient-dev \
+        build-essential \
         gcc \
         pkg-config \
-        libcairo2-dev \
+        default-libmysqlclient-dev \
+        libmariadb-dev \
+        libmariadb-dev-compat \
         libfreetype6-dev \
-        build-essential \
-    && rm -rf /var/lib/apt/lists/*
+        libjpeg62-turbo-dev \
+        libpng-dev \
+        zlib1g-dev \
+        libssl-dev \
+        libffi-dev \
+        && rm -rf /var/lib/apt/lists/*
 
-# =============================
-#      Copiar proyecto
-# =============================
-WORKDIR ${APP_HOME}
-COPY . ${APP_HOME}
+# Copiar backend
+WORKDIR /app
+COPY BackEnd/ .
 
-# =============================
-#      Instalar backend
-# =============================
-WORKDIR ${BACKEND_DIR}
-RUN pip install --no-cache-dir -r ${REQUIREMENTS_FILE}
+# Instalar dependencias
+RUN pip install --no-cache-dir --upgrade pip wheel setuptools && \
+    pip install --no-cache-dir -r requirements.txt
 
-# =============================
-#      Comando por defecto
-# =============================
-CMD ["sh", "-c", "${START_CMD}"]
+ENV PORT=8000
+EXPOSE 8000
 
-# =============================
-#      Exponer Puerto
-# =============================
-EXPOSE ${UVICORN_PORT}
+# EJECUTAR ALEMBIC ANTES DE INICIAR UVICORN
+CMD ["sh", "-c", "alembic upgrade head && uvicorn main:app --host 0.0.0.0 --port $PORT"]
