@@ -20,7 +20,7 @@ RUN apt-get update && \
 
 # Copiar backend
 WORKDIR /app
-COPY Backend/ .
+COPY . .
 
 # Instalar dependencias
 RUN pip install --no-cache-dir --upgrade pip wheel setuptools && \
