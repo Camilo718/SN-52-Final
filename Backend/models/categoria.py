@@ -3,7 +3,7 @@ from sqlalchemy import Column, Integer, String, Date, Boolean, ForeignKey
 from sqlalchemy.orm import relationship
 
 class Categoria(Base):
-    __tablename__ = "categorias"
+    __tablename__ = "categoria"
     id_categoria = Column(Integer,
                 primary_key=True)
     fecha_creacion = Column(Date)

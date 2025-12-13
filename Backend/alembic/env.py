@@ -1,0 +1,73 @@
+from logging.config import fileConfig
+
+from sqlalchemy import engine_from_config
+from sqlalchemy import pool
+
+from alembic import context
+
+import sys
+import os
+
+
+# Agregar path raíz
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+from db import Base
+from models import (
+    Categoria, Comentario, Imagen, Noticia, Rol, Usuario
+)
+
+# Alembic Config
+config = context.config
+
+# Logging
+if config.config_file_name is not None:
+    fileConfig(config.config_file_name)
+
+# Metadata
+target_metadata = Base.metadata
+
+# 🚀 FIX IMPORTANTE: Reemplazar mysql:// → mysql+pymysql://
+MYSQL_URL = os.getenv("MYSQL_URL")
+DATABASE_HOST = os.getenv("MYSQLHOST")
+DATABASE_USER = os.getenv("MYSQLUSER")
+DATABASE_PASSWORD = os.getenv("MYSQLPASSWORD")
+DATABASE_NAME = os.getenv("MYSQLDATABASE")
+DATABASE_PORT = os.getenv("MYSQLPORT")
+
+if MYSQL_URL:
+    MYSQL_URL = MYSQL_URL.replace("mysql://", "mysql+pymysql://")
+    config.set_main_option("sqlalchemy.url", MYSQL_URL)
+
+
+def run_migrations_offline() -> None:
+    url = config.get_main_option("sqlalchemy.url")
+    context.configure(
+        url=url,
+        target_metadata=target_metadata,
+        literal_binds=True,
+        dialect_opts={"paramstyle": "named"},
+    )
+
+    with context.begin_transaction():
+        context.run_migrations()
+
+
+def run_migrations_online() -> None:
+    connectable = engine_from_config(
+        config.get_section(config.config_ini_section, {}),
+        prefix="sqlalchemy.",
+        poolclass=pool.NullPool,
+    )
+
+    with connectable.connect() as connection:
+        context.configure(connection=connection, target_metadata=target_metadata)
+
+        with context.begin_transaction():
+            context.run_migrations()
+
+
+if context.is_offline_mode():
+    run_migrations_offline()
+else:
+    run_migrations_online()

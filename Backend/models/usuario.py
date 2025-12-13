@@ -5,7 +5,7 @@ from sqlalchemy.orm import relationship
 from datetime import datetime
 
 class Usuario(Base):
-    __tablename__ = "usuarios"
+    __tablename__ = "usuario"
 
     id_usuario = Column(Integer, primary_key=True, index=True)
     nombre_usuario = Column(String(60))
@@ -15,7 +15,7 @@ class Usuario(Base):
     foto_usuario = Column(String(255), nullable=True)
 
     rol_id = Column(Integer, ForeignKey("roles.id_rol"), nullable=False)
-    rol = relationship("Rol", back_populates="usuarios")
+    rol = relationship("Rol", back_populates="usuario")
     comentarios = relationship("Comentario", back_populates="usuario")
 
     reset_token = Column(String(255), nullable=True)
