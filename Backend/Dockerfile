@@ -17,19 +17,18 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     zlib1g-dev \
     libssl-dev \
     libffi-dev \
-    libffi-dev \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
-# Copiar requirements primero (cache)
-COPY requirements.txt .
+# ⬇️ DESDE EL ROOT DEL REPO
+COPY Backend/requirements.txt .
 
 RUN pip install --no-cache-dir --upgrade pip wheel setuptools && \
     pip install --no-cache-dir -r requirements.txt
 
-# Copiar el resto del backend
-COPY . .
+# ⬇️ COPIAR TODO EL BACKEND
+COPY Backend/ .
 
 ENV PORT=8000
 EXPOSE 8000
